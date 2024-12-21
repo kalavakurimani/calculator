@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="92cb4cb3-ea51-4f8f-88fc-fa2be59b0630" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="calculatorFlow" doc:id="649e9298-4d8f-4000-9554-790c0b76be65" >
+		<http:listener doc:name="Listener" doc:id="bb5bc25d-a2ed-403a-bbc5-8d153e68ba6a" config-ref="HTTP_Listener_config" path="/operations"/>
+		<set-variable value="#[attributes.queryParams.num1]" doc:name="num1" doc:id="73f4a6c9-2482-480e-9333-97afada094ba" variableName="num1"/>
+		<set-variable value="#[attributes.queryParams.num2]" doc:name="num2" doc:id="04d80cdf-fd5f-4123-83fd-caa4246c7188" variableName="num2"/>
+		<ee:transform doc:name="Transform Message" doc:id="3312a31a-a10c-448c-a183-73d50a996ead" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": "success",
+	"Addition": vars.num1 as Number + vars.num2 as Number,
+	"Subraction": vars.num1 as Number - vars.num2 as Number,
+	"Multiplication": vars.num1 as Number * vars.num2 as Number
+	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
